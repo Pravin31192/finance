@@ -43,12 +43,66 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | This is not exactly a route, but allows you to automatically route
 | controller and method names that contain dashes. '-' isn't a valid
 | class or method name character, so it requires translation.
-| When you set this option to TRUE, it will replace ALL dashes with
-| underscores in the controller and method URI segments.
+| When you set this option to TRUE, it will replace ALL dashes in the
+| controller and method URI segments.
 |
 | Examples:	my-controller/index	-> my_controller/index
 |		my-controller/my-method	-> my_controller/my_method
 */
 $route['default_controller'] = 'welcome';
+
+// Visitor Links
+$route['home'] = 'welcome';
+$route['aboutUs'] = 'welcome/aboutUs';
+$route['courtBooking'] = 'welcome/courtBooking';
+$route['gallery'] = 'welcome/gallery';
+$route['contactUs'] = 'welcome/contactUs';
+$route['signup'] = 'welcome/signup';
+$route['login'] = 'welcome/login';
+$route['logout'] = 'welcome/logout';
+$route['courtCheckOut'] = 'welcome/courtCheckOut';
+$route['saveSession'] = 'welcome/saveSession';
+$route['make-payment'] = 'welcome/makeCustomerPayment';
+$route['payment-response'] = 'welcome/PaymentResponse';
+$route['referFirend'] = 'welcome/referFriend';
+$route['newsletter'] = 'welcome/newsletter';
+
+
+
+
+$route['checkBookings'] = 'admin/courts/checkBookingsForDate';
+
+//print_r("adkjfhaks");exit;
+// Admin Links
+$route['courts/create'] = 'admin/courts/CreateCourt';
+$route['submit/courts'] = 'admin/courts/CreateCourt';
+$route['slots'] = 'admin/slots/CreateSlot';
+$route['slots/edit'] = 'admin/slots/EditSlot';
+$route['admin/delete-slot'] = 'admin/slots/delete';
+$route['slots/getSlots'] = 'admin/slots/getSlots/$1';
+$route['admin/login'] = 'welcome/adminLogin';
+$route['admin/court/edit/(:any)'] = 'admin/courts/EditCourt/$1';
+$route['admin/bookings'] = 'admin/bookings/ViewBookings';
+$route['admin/checkBookings'] = 'admin/bookings/CheckBookings';
+$route['admin/bookslots'] = 'admin/bookings/BookSlotForCustomer';
+$route['admin/current-bookings'] = 'admin/bookings/GetAllBookings';
+$route['admin/booking-release/(:any)'] = 'admin/bookings/BookingReleaseByAdmin/$1';
+$route['admin/payForBookings'] = 'admin/bookings/PayForBookings';
+$route['admin/court/delete/(:any)'] = 'admin/courts/Delete/$1';
+$route['admin/search-bookings'] = 'admin/bookings/DateSearch';
+$route['admin/customer/create'] = 'admin/customer/CreateCustomer';
+$route['admin/customer/saveVehicle'] = 'admin/customer/SaveVehicle';
+
+
+
+
+// @TODO remove this line after the testing.
+//$route['saveBookingSlots'] = 'welcome/saveBookingSlots';
+
+
+
+
+
+
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;

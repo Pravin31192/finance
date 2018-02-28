@@ -6,7 +6,7 @@
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2014 - 2018, British Columbia Institute of Technology
+ * Copyright (c) 2014 - 2017, British Columbia Institute of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@
  * @package	CodeIgniter
  * @author	EllisLab Dev Team
  * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (https://ellislab.com/)
- * @copyright	Copyright (c) 2014 - 2018, British Columbia Institute of Technology (http://bcit.ca/)
+ * @copyright	Copyright (c) 2014 - 2017, British Columbia Institute of Technology (http://bcit.ca/)
  * @license	http://opensource.org/licenses/MIT	MIT License
  * @link	https://codeigniter.com
  * @since	Version 1.0.0
@@ -182,7 +182,7 @@ class CI_Loader {
 	 * Loads and instantiates libraries.
 	 * Designed to be called from application controllers.
 	 *
-	 * @param	mixed	$library	Library name
+	 * @param	string	$library	Library name
 	 * @param	array	$params		Optional parameters to pass to the library class constructor
 	 * @param	string	$object_name	An optional object name to assign to
 	 * @return	object
@@ -226,7 +226,7 @@ class CI_Loader {
 	 *
 	 * Loads and instantiates models.
 	 *
-	 * @param	mixed	$model		Model name
+	 * @param	string	$model		Model name
 	 * @param	string	$name		An optional object name to assign to
 	 * @param	bool	$db_conn	An optional database connection configuration to initialize
 	 * @return	object
@@ -303,8 +303,6 @@ class CI_Loader {
 				{
 					throw new RuntimeException($app_path."Model.php exists, but doesn't declare class CI_Model");
 				}
-
-				log_message('info', 'CI_Model class loaded');
 			}
 			elseif ( ! class_exists('CI_Model', FALSE))
 			{
@@ -319,8 +317,6 @@ class CI_Loader {
 				{
 					throw new RuntimeException($app_path.$class.".php exists, but doesn't declare class ".$class);
 				}
-
-				log_message('info', config_item('subclass_prefix').'Model class loaded');
 			}
 		}
 
@@ -348,16 +344,13 @@ class CI_Loader {
 				throw new RuntimeException('Unable to locate the model you have specified: '.$model);
 			}
 		}
-
-		if ( ! is_subclass_of($model, 'CI_Model'))
+		elseif ( ! is_subclass_of($model, 'CI_Model'))
 		{
-			throw new RuntimeException("Class ".$model." doesn't extend CI_Model");
+			throw new RuntimeException("Class ".$model." already exists and doesn't extend CI_Model");
 		}
 
 		$this->_ci_models[] = $name;
-		$model = new $model();
-		$CI->$name = $model;
-		log_message('info', 'Model "'.get_class($model).'" initialized');
+		$CI->$name = new $model();
 		return $this;
 	}
 
@@ -944,7 +937,7 @@ class CI_Loader {
 		empty($_ci_vars) OR $this->_ci_cached_vars = array_merge($this->_ci_cached_vars, $_ci_vars);
 		extract($this->_ci_cached_vars);
 
-		/**
+		/*
 		 * Buffer the output
 		 *
 		 * We buffer the output for two reasons:
@@ -957,7 +950,18 @@ class CI_Loader {
 		 */
 		ob_start();
 
-		include($_ci_path); // include() vs include_once() allows for multiple views with the same name
+		// If the PHP installation does not support short tags we'll
+		// do a little string replacement, changing the short tags
+		// to standard PHP echo statements.
+		if ( ! is_php('5.4') && ! ini_get('short_open_tag') && config_item('rewrite_short_tags') === TRUE)
+		{
+			echo eval('?>'.preg_replace('/;*\s*\?>/', '; ?>', str_replace('<?=', '<?php echo ', file_get_contents($_ci_path))));
+		}
+		else
+		{
+			include($_ci_path); // include() vs include_once() allows for multiple views with the same name
+		}
+
 		log_message('info', 'File loaded: '.$_ci_path);
 
 		// Return the file data if requested
@@ -1033,26 +1037,6 @@ class CI_Loader {
 			return $this->_ci_load_stock_library($class, $subdir, $params, $object_name);
 		}
 
-		// Safety: Was the class already loaded by a previous call?
-		if (class_exists($class, FALSE))
-		{
-			$property = $object_name;
-			if (empty($property))
-			{
-				$property = strtolower($class);
-				isset($this->_ci_varmap[$property]) && $property = $this->_ci_varmap[$property];
-			}
-
-			$CI =& get_instance();
-			if (isset($CI->$property))
-			{
-				log_message('debug', $class.' class already loaded. Second attempt ignored.');
-				return;
-			}
-
-			return $this->_ci_init_library($class, '', $params, $object_name);
-		}
-
 		// Let's search for the requested library file and load it.
 		foreach ($this->_ci_library_paths as $path)
 		{
@@ -1063,8 +1047,27 @@ class CI_Loader {
 			}
 
 			$filepath = $path.'libraries/'.$subdir.$class.'.php';
+
+			// Safety: Was the class already loaded by a previous call?
+			if (class_exists($class, FALSE))
+			{
+				// Before we deem this to be a duplicate request, let's see
+				// if a custom object name is being supplied. If so, we'll
+				// return a new instance of the object
+				if ($object_name !== NULL)
+				{
+					$CI =& get_instance();
+					if ( ! isset($CI->$object_name))
+					{
+						return $this->_ci_init_library($class, '', $params, $object_name);
+					}
+				}
+
+				log_message('debug', $class.' class already loaded. Second attempt ignored.');
+				return;
+			}
 			// Does the file exist? No? Bummer...
-			if ( ! file_exists($filepath))
+			elseif ( ! file_exists($filepath))
 			{
 				continue;
 			}
@@ -1109,17 +1112,16 @@ class CI_Loader {
 				$prefix = config_item('subclass_prefix');
 			}
 
-			$property = $object_name;
-			if (empty($property))
+			// Before we deem this to be a duplicate request, let's see
+			// if a custom object name is being supplied. If so, we'll
+			// return a new instance of the object
+			if ($object_name !== NULL)
 			{
-				$property = strtolower($library_name);
-				isset($this->_ci_varmap[$property]) && $property = $this->_ci_varmap[$property];
-			}
-
-			$CI =& get_instance();
-			if ( ! isset($CI->$property))
-			{
-				return $this->_ci_init_library($library_name, $prefix, $params, $object_name);
+				$CI =& get_instance();
+				if ( ! isset($CI->$object_name))
+				{
+					return $this->_ci_init_library($library_name, $prefix, $params, $object_name);
+				}
 			}
 
 			log_message('debug', $library_name.' class already loaded. Second attempt ignored.');
@@ -1141,8 +1143,10 @@ class CI_Loader {
 				{
 					return $this->_ci_init_library($library_name, $prefix, $params, $object_name);
 				}
-
-				log_message('debug', $path.' exists, but does not declare '.$prefix.$library_name);
+				else
+				{
+					log_message('debug', $path.' exists, but does not declare '.$prefix.$library_name);
+				}
 			}
 		}
 
@@ -1160,8 +1164,10 @@ class CI_Loader {
 					$prefix = config_item('subclass_prefix');
 					break;
 				}
-
-				log_message('debug', $path.' exists, but does not declare '.$subclass);
+				else
+				{
+					log_message('debug', $path.' exists, but does not declare '.$subclass);
+				}
 			}
 		}
 
