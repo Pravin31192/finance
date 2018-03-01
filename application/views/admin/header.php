@@ -84,8 +84,13 @@
                         <a href="<?php echo base_url('admin/customer/saveVehicle');?>"><i class="fa fa-clock-o"></i> <span class="nav-label">Vehicle</span>  </a>
                     </li>
                     
+                    
                     <li>
-                        <a href="<?php echo base_url('slots');?>"><i class="fa fa-clock-o"></i> <span class="nav-label">Slots</span>  </a>
+                        <a href="<?php echo base_url('admin/loan/createLoan');?>"><i class="fa fa-money"></i> <span class="nav-label">Loan</span>  </a>
+                    </li>
+
+                    <li>
+                        <a href="<?php echo base_url('slots');?>"><i class="fa fa-money"></i> <span class="nav-label">Slots</span>  </a>
                     </li>
                     <li>
                         <a href="<?php echo base_url('admin/bookings');?>"><i class="fa fa-search"></i>

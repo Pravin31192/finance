@@ -20,6 +20,19 @@ class Customer_model extends CI_Model
         return $this->db->insert_id();
 	}
 
+	public function saveVehicle($dataProvider)
+	{
+		$this->db->insert('vehicle', $dataProvider);
+        return $this->db->insert_id();	
+	}
+
+	public function getCustomerVehicles($customerId)
+	{
+		$this->db->get_where('vehicle', ['user_id' => $customerId]);
+		var_dump($this->db->result());exit;
+		return $this->db->result();
+	}
+
 	/**
 	* Name : createCourt
 	* Purpose : To save the details of the courts in the table.

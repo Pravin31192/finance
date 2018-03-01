@@ -28,7 +28,7 @@
                                 <label class="font-normal">Select Customer</label>
                                 <div>
                                     <select name="user_id" 
-                                    class="chosen-select"  tabindex="2">
+                                    class="chosen-select"  tabindex="2" onchange="getVehicles(this)">
                                     <option value="">Select Customer</option>
                                     <?php foreach($userList as $temp) {?>
                                     <option value="<?php echo $temp->user_id?>"><?php echo $temp->first_name.' '.$temp->last_name?></option>
@@ -83,10 +83,23 @@
 
     
     
-    <script>
-        $(document).ready(function(){
-            $('.clockpicker').clockpicker();
+<script>
+$(document).ready(function(){
+    $('.clockpicker').clockpicker();
 
-        });
+});
 
-    </script>
+function getVehicles(userObject)
+{
+    var customerId = userObject.value;
+    alert(customerId);
+    $.ajax({
+        url : '<?php echo base_url('admin/customer/loadCustomerVehicles');?>',
+        type : 'POST',
+        data : {customerId : customerId},
+        success : function(result){
+            console.log(result);
+        }
+    });
+}
+</script>

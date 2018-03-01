@@ -150,8 +150,6 @@ function deleteSlot(a)
     } else {
         //alert("Cancelled");return;
     }
-
-    
 }   
 
 </script>

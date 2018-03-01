@@ -88,5 +88,15 @@ class User_model extends CI_Model {
 			// An error page has to be displayed.
 		}
 	}
+
+	/**
+	* Name : userList
+	*/
+	public function getCustomerList()
+	{
+		$query = $this->db->get_where('user', ['role' => 2]);
+		$userList = $query->result();
+		return $userList;
+	}
 }
 ?>

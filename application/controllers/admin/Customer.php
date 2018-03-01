@@ -8,6 +8,7 @@ class Customer extends CI_Controller {
 		$this->load->view('admin/header');
 		// Loading the models here.
 		$this->load->model('admin/Customer_model', 'CustomerModel');
+        $this->load->model('admin/User_model', 'UserModel');
 	}
 
 	function numeric_wcomma($str)
@@ -43,6 +44,7 @@ class Customer extends CI_Controller {
             	'address' => $this->input->post('father_name'),
                 'gender' => $this->input->post('gender'),
                 'mobile' => $this->input->post('mobile'),
+                'role' => 2,
                 'created_at' => time(),
                 'updated_at' => time(),
 			];
@@ -55,10 +57,39 @@ class Customer extends CI_Controller {
 
 	public function SaveVehicle()
 	{
-		$this->load->view('admin/vehicle/create-vehicle');
-		$this->load->view('admin/footer.php');
+        $this->form_validation->set_rules('user_id', 'Customer', 'trim|required');
+        $this->form_validation->set_rules('vehicle_name', 'Vehicle Name', 'trim|required');
+        $this->form_validation->set_rules('vehicle_model', 'Vehicle Model', 'trim|required');
+        $this->form_validation->set_rules('vehicle_company', 'Vechicle Company', 'trim|required');
+        $this->form_validation->set_rules('reg_number', 'Registration Number', 'trim|required');
+        if ($this->form_validation->run() === FALSE) { 
+            $userList = $this->UserModel->getCustomerList();
+            $dataProvider['userList'] = $userList;
+            $this->load->view('admin/vehicle/create-vehicle', $dataProvider);
+            $this->load->view('admin/footer.php');
+        } else {
+
+            $dataProvider = [
+                'user_id' => $this->input->post('user_id'),
+                'vehicle_name' => $this->input->post('vehicle_name'),
+                'vehicle_model' => $this->input->post('vehicle_model'),
+                'vehicle_company' => $this->input->post('vehicle_company'),
+                'reg_number' => $this->input->post('reg_number'),
+                'created_at' => time(),
+                'updated_at' => time()
+            ];
+            $insert = $this->CustomerModel->saveVehicle($dataProvider);
+            $this->session->flashdata('success-message', "Customer Created Successfully");
+            redirect('admin/customer/saveVehicle');
+        }
 	}
 
+    public function loadCustomerVehicles()
+    {
+        echo "hello";exit;
+        $customerId = $this->input->post('customerId');
+        $customerVehicles = $this->CustomerModel->getCustomerVehicles($customerId);
+    }
 
 } //End of class file
 

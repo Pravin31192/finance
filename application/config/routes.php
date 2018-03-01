@@ -92,6 +92,8 @@ $route['admin/court/delete/(:any)'] = 'admin/courts/Delete/$1';
 $route['admin/search-bookings'] = 'admin/bookings/DateSearch';
 $route['admin/customer/create'] = 'admin/customer/CreateCustomer';
 $route['admin/customer/saveVehicle'] = 'admin/customer/SaveVehicle';
+$route['admin/loan/createLoan'] = 'admin/loan/CreateLoan';
+
 
 
 
