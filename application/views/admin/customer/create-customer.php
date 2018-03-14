@@ -66,7 +66,7 @@
                                 <input type="radio" name="gender" value="2"> Female
                                 <?php echo form_error('gender'); ?>
                             </div>
-
+                             
                             <div class="form-group col-md-4">
                                 <button class="btn btn-sm btn-primary pull-right m-t-n-xs btnstyle" type="submit">
                                     <strong>Save</strong>
@@ -159,12 +159,3 @@
         </div>
     </div>
 </div>
-
-    
-    
-    <script>
-        $(document).ready(function(){
-            $('.clockpicker').clockpicker();
-        });
-
-    </script>

@@ -13,10 +13,51 @@ class Loan extends CI_Controller {
 
     public function CreateLoan()
     {
-        $userList = $this->UserModel->getCustomerList();
-        $dataProvider['userList'] = $userList;
-        $this->load->view('admin/loan/create-loan', $dataProvider);
-        $this->load->view('admin/footer.php');
+
+        $this->form_validation->set_rules('user_id', 'Customer', 'trim|required');
+        $this->form_validation->set_rules('vehicle_id', 'Vehicle Number', 'trim|required');
+        $this->form_validation->set_rules('loan_value', 'Loan Amount', 'trim|required');
+        $this->form_validation->set_rules('no_of_installments', 'No of Installments', 'trim|integer|required');
+        if ($this->form_validation->run() === FALSE) { 
+            $userList = $this->UserModel->getCustomerList();
+            $dataProvider['userList'] = $userList;
+            $this->load->view('admin/loan/create-loan', $dataProvider);
+            $this->load->view('admin/footer.php');
+        } else {
+
+            $dataProvider = [
+                'user_id' => $this->input->post('user_id'),
+                'vehicle_id' => $this->input->post('vehicle_id'),
+                'loan_value' => $this->input->post('loan_value'),
+                'interest_percentage' => $this->input->post('interest_percentage'),
+                'no_of_installments' => $this->input->post('no_of_installments'),
+                'monthly_principle' => $this->input->post('monthly_principle'),
+                'monthly_interest' => $this->input->post('monthly_interest'),
+                'installment_amount' => $this->input->post('monthly_principle') + $this->input->post('monthly_interest'),
+                'total_paid' => 0,
+                'installments_paid' => 0,
+                'created_at' => time(),
+                'updated_at' => time()
+            ];
+
+            // To save the installments
+            $saveLoan = $this->CustomerModel->saveLoan($dataProvider);
+            for ($i = 0 ; $i < $this->input->post('no_of_installments'); $i++) {
+                $dataProvider = [
+                    'loan_id' => $saveLoan,
+                    'monthly_principle' => $this->input->post('monthly_principle'),
+                    'monthly_interest' => $this->input->post('monthly_interest'),
+                    'fine' => 0,
+                    'status' => 0, 
+                    'created_at' => time(),
+                    'updated_at' => time()
+                ];
+                $saveInstallments = $this->CustomerModel->saveInstallments($dataProvider);
+            }
+            redirect('admin/loan/createLoan');
+        }
+
+        
     }
 	
     

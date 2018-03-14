@@ -23,14 +23,24 @@ class Customer_model extends CI_Model
 	public function saveVehicle($dataProvider)
 	{
 		$this->db->insert('vehicle', $dataProvider);
-        return $this->db->insert_id();	
+        return $this->db->insert_id();
 	}
 
 	public function getCustomerVehicles($customerId)
 	{
-		$this->db->get_where('vehicle', ['user_id' => $customerId]);
-		var_dump($this->db->result());exit;
-		return $this->db->result();
+		$query = $this->db->get_where('vehicle', ['user_id' => $customerId]);
+		return $query->result();
+	}
+
+
+	public function saveLoan($dataProvider) {
+		$this->db->insert('loan', $dataProvider);
+        return $this->db->insert_id();
+	}
+
+	public function saveInstallments($dataprovider) {
+		$this->db->insert('loan_installments', $dataProvider);
+        return $this->db->insert_id();	
 	}
 
 	/**

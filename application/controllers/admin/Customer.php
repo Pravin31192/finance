@@ -86,9 +86,16 @@ class Customer extends CI_Controller {
 
     public function loadCustomerVehicles()
     {
-        echo "hello";exit;
         $customerId = $this->input->post('customerId');
         $customerVehicles = $this->CustomerModel->getCustomerVehicles($customerId);
+        $customerVehiclesArray = [];
+        $customerVehiclesArray[] = "<option value=''>Select a vehicle</option>";
+        foreach ($customerVehicles as $key => $temp) {
+            $customerVehiclesArray[] = "<option value='$temp->id'>$temp->reg_number</option>";
+        }
+        //print_r($customerVehiclesArray);exit;
+        $result = json_encode($customerVehiclesArray);
+        print_r($result);exit;
     }
 
 } //End of class file

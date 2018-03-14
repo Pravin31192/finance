@@ -40,31 +40,55 @@
 
                             <div class="form-group col-md-4">
                                 <label>Vehicle Name</label>
-                                <input type="text" name="vehicle_name" placeholder="Enter Vehicle name" 
-                                class="form-control" value="<?php echo set_value('vehicle_name')?>">
-                                <?php echo form_error('vehicle_name'); ?>
+                                <select name="vehicle_id" placeholder="Enter Vehicle name" id="customer_vehicles"
+                                class="form-control" value="<?php echo set_value('vehicle_id')?>">
+                                <option value="">Select Vehicle</option>
+                                </select>
+                                
+                                <?php echo form_error('vehicle_id'); ?>
                             </div>
 
 
                             <div class="form-group col-md-4">
-                                <label>Vehicle Model</label>
-                                <input type="text" name="vehicle_model" placeholder="Enter Vehicle Model" 
-                                class="form-control" value="<?php echo set_value('vehicle_model')?>">
-                                <?php echo form_error('vehicle_model'); ?>
+                                <label>Loan Amount</label>
+                                <input type="text" name="loan_value" placeholder="Enter Loan amount" id="loan_value"
+                                class="form-control" value="<?php echo set_value('loan_value')?>">
+                                <?php echo form_error('loan_value'); ?>
                             </div>
 
                             <div class="form-group col-md-4">
-                                <label>Vehicle Company</label>
-                                <input type="text" name="vehicle_company" placeholder="Enter Vehicle Manufacturer"
-                                class="form-control" value="<?php echo set_value('vehicle_company')?>">
-                                <?php echo form_error('vehicle_company'); ?>
+                                <label>Interest Percentage</label>
+                                <input type="text" name="interest_percentage" placeholder="Enter Interest Percentage" id="interest_percentage" onchange="calculateInterest(this)"
+                                class="form-control" value="<?php echo set_value('interest_percentage')?>">
+                                <?php echo form_error('interest_percentage'); ?>
                             </div>
 
                             <div class="form-group col-md-4">
-                                <label>Registration number</label>
-                                <input type="text" name="reg_number" placeholder="Enter Registration number" 
-                                class="form-control" value="<?php echo set_value('reg_number')?>">
-                                <?php echo form_error('reg_number'); ?>
+                                <label>Monthly Interest</label>
+                                <input type="text" name="monthly_interest" placeholder="Enter Monthly Interest" id="monthly_interest"
+                                class="form-control" value="<?php echo set_value('monthly_interest')?>">
+                                <?php echo form_error('monthly_interest'); ?>
+                            </div>
+
+                            <div class="form-group col-md-4">
+                                <label>No of Installments</label>
+                                <input type="text" name="no_of_installments" placeholder="No of Installments" id="no_of_installments" onchange="calculateInstallments(this)"
+                                class="form-control" value="<?php echo set_value('no_of_installments')?>">
+                                <?php echo form_error('no_of_installments'); ?>
+                            </div>
+
+                            <div class="form-group col-md-4">
+                                <label>Monthly Principle</label>
+                                <input type="text" name="monthly_principle" placeholder="Monthly Principle" id="monthly_principle" 
+                                class="form-control" value="<?php echo set_value('monthly_principle')?>">
+                                <?php echo form_error('monthly_principle'); ?>
+                            </div>
+
+                            <div class="form-group col-md-4">
+                                <label>Monthly Pay</label>
+                                <input type="text" name="installment_amount" placeholder="Total return" id="installment_amount" readonly="true"
+                                class="form-control" value="<?php echo set_value('installment_amount')?>">
+                                <?php echo form_error('installment_amount'); ?>
                             </div>
 
                             <div class="form-group col-md-4">
@@ -92,14 +116,45 @@ $(document).ready(function(){
 function getVehicles(userObject)
 {
     var customerId = userObject.value;
-    alert(customerId);
+    console.log(customerId);
     $.ajax({
         url : '<?php echo base_url('admin/customer/loadCustomerVehicles');?>',
         type : 'POST',
         data : {customerId : customerId},
         success : function(result){
-            console.log(result);
+            var obj = JSON.parse(result);
+            console.log(obj);
+            $("#customer_vehicles").html('');
+            for (var i=0 ; i < obj.length; i++) {
+                $("#customer_vehicles").append(obj[i]);
+            }
         }
     });
+}
+
+function calculateInstallments(noOfInstallmentsObj) {
+    var loanAmount = $("#loan_value").val();
+    if (loanAmount != '' && loanAmount != undefined) {
+        var noOfInstallments = noOfInstallmentsObj.value;
+        var monthlyPrinciple = loanAmount / noOfInstallments;
+        $("#monthly_principle").val(monthlyPrinciple);
+        var monthlyInterest = $("#monthly_interest").val();
+        var monthlyPay = +monthlyPrinciple + +monthlyInterest;
+        $("#installment_amount").val(monthlyPay);
+    } else {
+        alert("Enter Loan Amount");
+    }
+    
+}
+
+function calculateInterest(interestObject) {
+    var loanAmount = $("#loan_value").val();
+    if (loanAmount != '' && loanAmount != undefined) {
+        var interestPercentage = interestObject.value;
+        var interest = loanAmount * (interestPercentage / 100);
+        $("#monthly_interest").val(interest);
+    } else {
+        alert("Enter Loan Amount");
+    }
 }
 </script>
