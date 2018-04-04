@@ -29,6 +29,8 @@
     <!-- jQuery UI -->
     <script src="<?php echo base_url("assets/");?>js/plugins/jquery-ui/jquery-ui.min.js"></script>
 
+    
+
     <!-- Toastr -->
     <script src="<?php echo base_url("assets/");?>js/plugins/toastr/toastr.min.js"></script>
     

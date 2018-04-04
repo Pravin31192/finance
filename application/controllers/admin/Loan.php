@@ -11,6 +11,15 @@ class Loan extends CI_Controller {
         $this->load->model('admin/User_model', 'UserModel');
 	}
 
+
+    public function collectionList()
+    {
+        $loanList = $this->CustomerModel->getLoanList();
+        $dataProvider['loanList'] = $loanList;
+        $this->load->view('admin/loan/loan-list', $dataProvider);
+        $this->load->view('admin/footer.php');
+    }
+
     public function CreateLoan()
     {
 
@@ -24,17 +33,23 @@ class Loan extends CI_Controller {
             $this->load->view('admin/loan/create-loan', $dataProvider);
             $this->load->view('admin/footer.php');
         } else {
-
+            $userDetail = $this->CustomerModel->getCustomerById($this->input->post('user_id'));
+            
+            $userName = $userDetail->first_name.' '.$userDetail->last_name;
+            $noOfInstallments = $this->input->post('no_of_installments');
+            $monthlyPay = $this->input->post('monthly_principle') + $this->input->post('monthly_interest');
             $dataProvider = [
                 'user_id' => $this->input->post('user_id'),
+                'customer_name' => $userName,
                 'vehicle_id' => $this->input->post('vehicle_id'),
                 'loan_value' => $this->input->post('loan_value'),
                 'interest_percentage' => $this->input->post('interest_percentage'),
-                'no_of_installments' => $this->input->post('no_of_installments'),
+                'no_of_installments' => $noOfInstallments,
                 'monthly_principle' => $this->input->post('monthly_principle'),
                 'monthly_interest' => $this->input->post('monthly_interest'),
-                'installment_amount' => $this->input->post('monthly_principle') + $this->input->post('monthly_interest'),
+                'installment_amount' => $monthlyPay,
                 'total_paid' => 0,
+                'total_to_pay' => $monthlyPay * $noOfInstallments,
                 'installments_paid' => 0,
                 'created_at' => time(),
                 'updated_at' => time()

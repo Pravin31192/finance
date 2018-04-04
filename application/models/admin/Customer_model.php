@@ -9,6 +9,12 @@ class Customer_model extends CI_Model
 		
 	}
 
+	public function getCustomerById($id)
+	{
+		$query = $this->db->get_where('user', ['user_id' => $id]);
+		return $query->row();
+	}
+
 	/**
 	* Name : saveCustomer
 	* Purpose : To save the details of the customers in the table.
@@ -38,9 +44,16 @@ class Customer_model extends CI_Model
         return $this->db->insert_id();
 	}
 
-	public function saveInstallments($dataprovider) {
+	public function saveInstallments($dataProvider) {
 		$this->db->insert('loan_installments', $dataProvider);
         return $this->db->insert_id();	
+	}
+
+
+	public function getLoanList()
+	{
+		$loanQuery = $this->db->get_where('loan');
+        return $loanQuery->result_array(); 
 	}
 
 	/**

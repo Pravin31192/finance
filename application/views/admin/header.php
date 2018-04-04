@@ -81,12 +81,16 @@
                     </li>
 
                     <li>
-                        <a href="<?php echo base_url('admin/customer/saveVehicle');?>"><i class="fa fa-clock-o"></i> <span class="nav-label">Vehicle</span>  </a>
+                        <a href="<?php echo base_url('admin/customer/saveVehicle');?>"><i class="fa fa-truck"></i> <span class="nav-label">Vehicle</span>  </a>
                     </li>
                     
                     
                     <li>
                         <a href="<?php echo base_url('admin/loan/createLoan');?>"><i class="fa fa-money"></i> <span class="nav-label">Loan</span>  </a>
+                    </li>
+
+                    <li>
+                        <a href="<?php echo base_url('admin/loan/collectionList');?>"><i class="fa fa-suitcase"></i> <span class="nav-label">Collection</span>  </a>
                     </li>
 
                     <li>
@@ -97,10 +101,11 @@
                             <span class="nav-label">Availability</span>
                         </a>
                     </li>
-
+                    
                     <li>
                         <a href="<?php echo base_url('admin/current-bookings') ?>"><i class="fa fa-laptop"></i> <span class="nav-label">Current Bookings</span></a>
                     </li>
+
                     <li>
                         <a href="package.html"><i class="fa fa-database"></i> <span class="nav-label">TBD</span></a>
                     </li>

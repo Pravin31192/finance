@@ -93,6 +93,10 @@ $route['admin/search-bookings'] = 'admin/bookings/DateSearch';
 $route['admin/customer/create'] = 'admin/customer/CreateCustomer';
 $route['admin/customer/saveVehicle'] = 'admin/customer/SaveVehicle';
 $route['admin/loan/createLoan'] = 'admin/loan/CreateLoan';
+$route['admin/loan/collectionList'] = 'admin/loan/collectionList';
+$route['admin/loan/view/(:any)'] = 'admin/loan/viewLoan/$1';
+
+
 
 
 
