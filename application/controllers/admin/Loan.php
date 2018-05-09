@@ -20,6 +20,41 @@ class Loan extends CI_Controller {
         $this->load->view('admin/footer.php');
     }
 
+
+    public function viewLoan($id){
+        $loanDetails = $this->CustomerModel->getInstallmentList($id);
+        $dataProvider['installmentList'] = $loanDetails;
+        $this->load->view('admin/loan/loan-installment-list', $dataProvider);
+        $this->load->view('admin/footer.php');
+    }
+
+    public function initiateInstallment($id) {
+        $installmentDetails = $this->CustomerModel->getInstallmentDetails($id);
+        $dataProvider['installmentDetails'] = $installmentDetails;
+        $this->load->view('admin/loan/pay-installment', $dataProvider);
+        $this->load->view('admin/footer.php');
+    }
+
+    public function payInsallmentSubmit()
+    {
+        $id = $this->input->post('id');
+        if (isset($id) && $id != null) {
+            $installmentDetails = $this->CustomerModel->getInstallmentDetails($id);
+            $loanDetails = $this->CustomerModel->getLoanDetails($installmentDetails->loan_id);
+            
+            $updateInstallmentDetails['status'] = 1;
+            $updateInstallmentDetails['fine'] = $this->input->post('fine');
+            $this->CustomerModel->updateInstallmentDetails(
+                $id,
+                $updateInstallmentDetails
+            );
+            exit;
+        } else {
+            redirect('admin/loan/collectionList');
+        }
+
+    }
+
     public function CreateLoan()
     {
 

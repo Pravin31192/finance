@@ -56,6 +56,30 @@ class Customer_model extends CI_Model
         return $loanQuery->result_array(); 
 	}
 
+	public function getInstallmentList($id)
+	{
+		$query = $this->db->get_where('loan_installments', ['loan_id' => $id]);
+		return $query->result();	
+	}
+
+	public function getInstallmentDetails($id)
+	{
+		$query = $this->db->get_where('loan_installments', ['id' => $id]);
+		return $query->row();
+	}
+
+	public function getLoanDetails($id)
+	{
+		$query = $this->db->get_where('loan', ['id' => $id]);
+		return $query->row();
+	}
+
+	public function updateInstallmentDetails($id, $dataProvider) 
+	{
+		$this->db->where('id', $id);
+		$this->db->update('loan_installments', $dataProvider);
+	}
+
 	/**
 	* Name : createCourt
 	* Purpose : To save the details of the courts in the table.

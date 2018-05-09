@@ -90,11 +90,17 @@ $route['admin/booking-release/(:any)'] = 'admin/bookings/BookingReleaseByAdmin/$
 $route['admin/payForBookings'] = 'admin/bookings/PayForBookings';
 $route['admin/court/delete/(:any)'] = 'admin/courts/Delete/$1';
 $route['admin/search-bookings'] = 'admin/bookings/DateSearch';
+
+
 $route['admin/customer/create'] = 'admin/customer/CreateCustomer';
 $route['admin/customer/saveVehicle'] = 'admin/customer/SaveVehicle';
 $route['admin/loan/createLoan'] = 'admin/loan/CreateLoan';
 $route['admin/loan/collectionList'] = 'admin/loan/collectionList';
 $route['admin/loan/view/(:any)'] = 'admin/loan/viewLoan/$1';
+$route['admin/loan/initiate/(:any)'] = 'admin/loan/initiateInstallment/$1';
+$route['admin/loan/payInstallment'] = 'admin/loan/payInsallmentSubmit';
+
+
 
 
 
