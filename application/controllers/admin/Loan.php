@@ -40,18 +40,53 @@ class Loan extends CI_Controller {
         $id = $this->input->post('id');
         if (isset($id) && $id != null) {
             $installmentDetails = $this->CustomerModel->getInstallmentDetails($id);
-            $loanDetails = $this->CustomerModel->getLoanDetails($installmentDetails->loan_id);
+            
             
             $updateInstallmentDetails['status'] = 1;
             $updateInstallmentDetails['fine'] = $this->input->post('fine');
-            $this->CustomerModel->updateInstallmentDetails(
+            $updateInstallmentDetails['updated_at'] = time();
+           /* $this->CustomerModel->updateInstallmentDetails(
                 $id,
                 $updateInstallmentDetails
+            );*/
+
+            $loanDetails = $this->CustomerModel->getLoanDetails($installmentDetails->loan_id);
+            $updateLoanDetails['installments_paid'] = $loanDetails->installments_paid + 1;
+            $totalPaid = $installmentDetails->monthly_principle + $installmentDetails->monthly_interest + $this->input->post('fine');
+            $updateLoanDetails['total_paid'] += $totalPaid;
+            $updateLoanDetails['updated_at'] = time();
+            $this->CustomerModel->updateLoanDetails(
+                $loanDetails->id,
+                $updateLoanDetails
             );
-            exit;
+            redirect('admin/loan/view/'.$loanDetails->id);
         } else {
             redirect('admin/loan/collectionList');
         }
+
+    }
+
+    public function printInstallment($id)
+    {
+        $installmentDetails = $this->CustomerModel->getInstallmentDetails($id);
+        $loanDetails = $this->CustomerModel->getLoanDetails($installmentDetails->loan_id);
+        $dataProvider['installmentDetails'] = $installmentDetails;
+        $dataProvider['loanDetails'] = $loanDetails;
+
+        $html=$this->load->view('admin/loan/installment-bill', $dataProvider, true);
+ 
+        //this the the PDF filename that user will get to download
+        $pdfFilePath = "loan_invoice.pdf";
+ 
+        //load mPDF library
+        $this->load->library('M_pdf');
+ 
+       //generate the PDF from the given html
+        $this->m_pdf->pdf->WriteHTML($html);
+ 
+        //Open in browser
+        $this->m_pdf->pdf->Output($pdfFilePath, "I");
+        //redirect('admin/collection');
 
     }
 
@@ -60,6 +95,7 @@ class Loan extends CI_Controller {
 
         $this->form_validation->set_rules('user_id', 'Customer', 'trim|required');
         $this->form_validation->set_rules('vehicle_id', 'Vehicle Number', 'trim|required');
+        $this->form_validation->set_rules('loan_no', 'Loan Number', 'trim|required');
         $this->form_validation->set_rules('loan_value', 'Loan Amount', 'trim|required');
         $this->form_validation->set_rules('no_of_installments', 'No of Installments', 'trim|integer|required');
         if ($this->form_validation->run() === FALSE) { 
@@ -76,6 +112,7 @@ class Loan extends CI_Controller {
             $dataProvider = [
                 'user_id' => $this->input->post('user_id'),
                 'customer_name' => $userName,
+                'loan_no' => $this->input->post('loan_no'),
                 'vehicle_id' => $this->input->post('vehicle_id'),
                 'loan_value' => $this->input->post('loan_value'),
                 'interest_percentage' => $this->input->post('interest_percentage'),
@@ -104,14 +141,12 @@ class Loan extends CI_Controller {
                 ];
                 $saveInstallments = $this->CustomerModel->saveInstallments($dataProvider);
             }
-            redirect('admin/loan/createLoan');
+            redirect('admin/loan/collectionList');
         }
 
         
     }
 	
-    
-
 	public function SaveVehicle()
 	{
         $this->form_validation->set_rules('user_id', 'Customer', 'trim|required');
@@ -125,9 +160,11 @@ class Loan extends CI_Controller {
             $this->load->view('admin/vehicle/create-vehicle', $dataProvider);
             $this->load->view('admin/footer.php');
         } else {
-
+            $userDetail = $this->CustomerModel->getCustomerById($this->input->post('user_id'));
+            $userName = $userDetail->first_name.' '.$userDetail->last_name;
             $dataProvider = [
                 'user_id' => $this->input->post('user_id'),
+                'user_name' => $userName,
                 'vehicle_name' => $this->input->post('vehicle_name'),
                 'vehicle_model' => $this->input->post('vehicle_model'),
                 'vehicle_company' => $this->input->post('vehicle_company'),

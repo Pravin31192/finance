@@ -43,13 +43,16 @@
                                     <td><?php echo ($temp->status == 0) ? 'Not Paid' : 'Paid';?></td>
                                     <td>
                                         <input type="hidden" name="<?php echo $this->security->get_csrf_token_name();?>" value="<?php echo $this->security->get_csrf_hash();?>">
-                                        <p>
+                                        <span>
                                             <a href="<?php echo base_url('admin/loan/initiate').'/'.$temp->id;?>">
-                                                <button type="button" class="btn btn-primary">
-                                                   Pay
-                                                </button>
+                                                <button type="button" class="btn btn-primary"<?php echo ($temp->status == 1) ? 'disabled' : '' ?>>Pay</button>
                                             </a>
-                                        </p>
+                                        </span>
+                                        <span>
+                                            <a target="_blank" href="<?php echo base_url('admin/loan/print-installment').'/'.$temp->id;?>">
+                                                <button type="button" class="btn btn-primary">Print</button>
+                                            </a>
+                                        </span>
                                     </td>
                                 </tr>
                                 <?php $srno++;endforeach;?>

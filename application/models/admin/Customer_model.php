@@ -80,6 +80,13 @@ class Customer_model extends CI_Model
 		$this->db->update('loan_installments', $dataProvider);
 	}
 
+	public function updateLoanDetails($id, $dataProvider) 
+	{
+		$this->db->where('id', $id);
+		$this->db->update('loan', $dataProvider);
+	}
+	
+
 	/**
 	* Name : createCourt
 	* Purpose : To save the details of the courts in the table.

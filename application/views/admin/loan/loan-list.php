@@ -22,6 +22,7 @@
                             <thead>
                                 <tr>
                                     <th>S. No</th>
+                                    <th>Loan Number</th>
                                     <th>Customer Name</th>
                                     <th>Loan Amount</th>
                                     <th>Interest</th>
@@ -36,6 +37,7 @@
                                 <?php $srno = 1; foreach($loanList as $temp):?>
                                 <tr class="gradeX" id="<?php echo $temp['id'];?>">
                                     <td><?php echo $srno;?></td>
+                                    <td><?php echo $temp['loan_no'];?></td>
                                     <td><?php echo ucwords($temp['customer_name']);?></td>
                                     <td><?php echo ucwords($temp['loan_value']);?></td>
                                     <td><?php echo ucfirst($temp['interest_percentage']);?></td>

@@ -24,6 +24,15 @@
                     //echo validation_errors();?>
                     
                         <?php echo form_open(); ?>
+
+
+                             <div class="form-group col-md-4">
+                                <label>Loan No</label>
+                                <input type="text" name="loan_no" placeholder="Enter Loan amount" id="loan_no"
+                                class="form-control" value="<?php echo set_value('loan_no')?>">
+                                <?php echo form_error('loan_no'); ?>
+                            </div>
+
                             <div class="form-group col-md-4">
                                 <label class="font-normal">Select Customer</label>
                                 <div>

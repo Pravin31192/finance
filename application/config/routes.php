@@ -99,12 +99,7 @@ $route['admin/loan/collectionList'] = 'admin/loan/collectionList';
 $route['admin/loan/view/(:any)'] = 'admin/loan/viewLoan/$1';
 $route['admin/loan/initiate/(:any)'] = 'admin/loan/initiateInstallment/$1';
 $route['admin/loan/payInstallment'] = 'admin/loan/payInsallmentSubmit';
-
-
-
-
-
-
+$route['admin/loan/print-installment/(:any)'] = 'admin/loan/printInstallment/$1';
 
 
 
